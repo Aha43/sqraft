@@ -1,4 +1,4 @@
-# Sqraft
+# sqraft
 
 Tools for faster prototyping sql schemas.
 ---
