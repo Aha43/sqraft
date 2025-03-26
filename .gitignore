@@ -1,3 +1,6 @@
+# sqcraft artifacts
+tql
+
 # Go build artifacts
 /bin/
 /build/
