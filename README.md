@@ -21,7 +21,7 @@ TableName(Column1, Column2Suffixes, Column3Suffixes...)
 | `+`    | Integer type                   | `INTEGER`                  |
 | `-`    | Text type                      | `TEXT` (default anyway)    |
 
-### �� Special rules
+### Special rules
 
 - A column named `Id` becomes `INTEGER PRIMARY KEY` by default
 - Any column ending in `Id` (e.g. `CategoryId`) becomes a foreign key referencing that table (`Category`)
