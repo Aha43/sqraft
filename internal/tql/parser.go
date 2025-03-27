@@ -16,11 +16,12 @@ type Column struct {
 	IsPK     bool
 	IsFK     bool
 	FKTable  string
+	FKColumn string
 }
 
 type Table struct {
-	Name   string
-	Fields []Column
+	Name        string
+	Fields      []Column
 	CompositePK []string // used only when composite PK is required
 }
 
@@ -62,16 +63,26 @@ func ParseTQL(input string) (*Table, error) {
 
 	if isJoin && len(joinTables) == 2 {
 		a, b := joinTables[0], joinTables[1]
-		aId := a + "Id"
-		bId := b + "Id"
 
-		fields = append(fields,
-			Column{Name: aId, Type: "INTEGER", Nullable: false, IsFK: true, FKTable: a},
-			Column{Name: bId, Type: "INTEGER", Nullable: false, IsFK: true, FKTable: b},
-		)
+		aPK, aType := loadPKColumnAndType(a, "tql")
+		bPK, bType := loadPKColumnAndType(b, "tql")
+
+		// aPK, err := LoadPKColumn(a, "tql")
+		// if err != nil {
+		// 	aPK = "Id"
+		// }
+		// bPK, err := LoadPKColumn(b, "tql")
+		// if err != nil {
+		// 	bPK = "Id"
+		// }
+
+		aCol := Column{Name: a + aPK, Type: aType, Nullable: false, IsFK: true, FKTable: a, FKColumn: aPK}
+		bCol := Column{Name: b + bPK, Type: bType, Nullable: false, IsFK: true, FKTable: b, FKColumn: bPK}
+
+		fields = append(fields, aCol, bCol)
 
 		if useCompositePK {
-			compositePK = []string{aId, bId}
+			compositePK = []string{aCol.Name, bCol.Name}
 		} else {
 			fields = append([]Column{{Name: "Id", Type: "INTEGER", Nullable: false, IsPK: true}}, fields...)
 		}
@@ -114,6 +125,11 @@ func ParseTQL(input string) (*Table, error) {
 		if strings.HasSuffix(col.Name, "Id") && col.Name != "Id" {
 			col.IsFK = true
 			col.FKTable = strings.TrimSuffix(col.Name, "Id")
+			pkCol, err := LoadPKColumn(col.FKTable, "tql")
+			if err != nil {
+				pkCol = "Id"
+			}
+			col.FKColumn = pkCol
 		}
 
 		fields = append(fields, col)
@@ -125,6 +141,7 @@ func ParseTQL(input string) (*Table, error) {
 
 	return &Table{Name: tableName, Fields: fields, CompositePK: compositePK}, nil
 }
+
 
 func (t *Table) ToSQL() string {
 	lines := []string{fmt.Sprintf("CREATE TABLE %s (", t.Name)}
@@ -152,7 +169,7 @@ func (t *Table) ToSQL() string {
 
 	for _, col := range t.Fields {
 		if col.IsFK {
-			lines = append(lines, fmt.Sprintf("  ,FOREIGN KEY (%s) REFERENCES %s(Id)", col.Name, col.FKTable))
+			lines = append(lines, fmt.Sprintf("  ,FOREIGN KEY (%s) REFERENCES %s(%s)", col.Name, col.FKTable, col.FKColumn))
 		}
 	}
 
@@ -180,4 +197,26 @@ func LoadPKColumn(tableName, tqlDir string) (string, error) {
 	}
 
 	return "", fmt.Errorf("no primary key found for table %s", tableName)
+}
+
+// loadPKColumnAndType returns both name and type of the primary key column
+func loadPKColumnAndType(tableName, tqlDir string) (string, string) {
+	path := filepath.Join(tqlDir, tableName + ".tql")
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "Id", "INTEGER"
+	}
+
+	table, err := ParseTQL(strings.TrimSpace(string(data)))
+	if err != nil {
+		return "Id", "INTEGER"
+	}
+
+	for _, col := range table.Fields {
+		if col.IsPK {
+			return col.Name, col.Type
+		}
+	}
+
+	return "Id", "INTEGER"
 }
