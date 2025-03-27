@@ -32,10 +32,13 @@ func main() {
 	fmt.Println(sql)
 
 	sqlDir := "sql"
-	err = os.MkdirAll(sqlDir, 0755)
-	if err != nil {
-		fmt.Println("Error creating sql directory:", err)
-		os.Exit(1)
+	tqlDir := "tql"
+	for _, dir := range []string{sqlDir, tqlDir} {
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			fmt.Printf("Error creating %s directory: %v\n", dir, err)
+			os.Exit(1)
+		}
 	}
 
 	existingFiles, err := filepath.Glob(filepath.Join(sqlDir, "*.sql"))
@@ -64,7 +67,7 @@ func main() {
 		}
 	}
 
-	var filename string
+	var sqlFilename string
 	if matchingFile != "" {
 		fmt.Printf("File for table %s already exists: %s\nOverwrite? [y/N]: ", tableName, filepath.Base(matchingFile))
 		scanner := bufio.NewScanner(os.Stdin)
@@ -75,16 +78,24 @@ func main() {
 				return
 			}
 		}
-		filename = matchingFile
+		sqlFilename = matchingFile
 	} else {
-		filename = filepath.Join(sqlDir, fmt.Sprintf("%04d_%s.sql", highestPrefix+1, tableName))
+		sqlFilename = filepath.Join(sqlDir, fmt.Sprintf("%04d_%s.sql", highestPrefix+1, tableName))
 	}
 
-	err = os.WriteFile(filename, []byte(sql), 0644)
+	err = os.WriteFile(sqlFilename, []byte(sql), 0644)
 	if err != nil {
 		fmt.Println("Error writing SQL file:", err)
 		os.Exit(1)
 	}
+	fmt.Println("Written to", sqlFilename)
 
-	fmt.Println("Written to", filename)
+	// Always write TQL file without prompting
+	tqlFilename := filepath.Join(tqlDir, tableName+".tql")
+	err = os.WriteFile(tqlFilename, []byte(input+"\n"), 0644)
+	if err != nil {
+		fmt.Println("Error writing TQL file:", err)
+		os.Exit(1)
+	}
+	fmt.Println("Written to", tqlFilename)
 }
