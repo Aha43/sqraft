@@ -1,6 +1,6 @@
 APP_NAME = tql
 SRC_DIR = ./cmd/sqraft
-OUT_DIR = .
+OUT_DIR = ./bin
 BIN_PATH = $(OUT_DIR)/$(APP_NAME)
 
 # Default target
