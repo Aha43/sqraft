@@ -3,7 +3,9 @@ package tql
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
+	"io/ioutil"
 )
 
 type Column struct {
@@ -156,4 +158,26 @@ func (t *Table) ToSQL() string {
 
 	lines = append(lines, ");")
 	return strings.Join(lines, "\n")
+}
+
+// LoadPKColumn parses a .tql file and returns the name of the primary key column
+func LoadPKColumn(tableName, tqlDir string) (string, error) {
+	path := filepath.Join(tqlDir, tableName + ".tql")
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("failed to read TQL file for %s: %w", tableName, err)
+	}
+
+	table, err := ParseTQL(strings.TrimSpace(string(data)))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse TQL for %s: %w", tableName, err)
+	}
+
+	for _, col := range table.Fields {
+		if col.IsPK {
+			return col.Name, nil
+		}
+	}
+
+	return "", fmt.Errorf("no primary key found for table %s", tableName)
 }
