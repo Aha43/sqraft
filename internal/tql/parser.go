@@ -56,6 +56,7 @@ func ParseTQL(input string) (*Table, error) {
 
 	var fields []Column
 	var compositePK []string
+	userDefinedPK := false
 
 	if isJoin && len(joinTables) == 2 {
 		a, b := joinTables[0], joinTables[1]
@@ -73,8 +74,7 @@ func ParseTQL(input string) (*Table, error) {
 			fields = append([]Column{{Name: "Id", Type: "INTEGER", Nullable: false, IsPK: true}}, fields...)
 		}
 	} else {
-		// default single table with Id column
-		fields = append(fields, Column{Name: "Id", Type: "INTEGER", Nullable: false, IsPK: true})
+		// we will determine later if Id should be added
 	}
 
 	for _, raw := range columns {
@@ -96,7 +96,9 @@ func ParseTQL(input string) (*Table, error) {
 				case '!': col.Unique = true
 				case '+': col.Type = "INTEGER"
 				case '-': col.Type = "TEXT"
-				case '*': col.IsPK = true
+				case '*':
+					col.IsPK = true
+					userDefinedPK = true
 				}
 			}
 		}
@@ -104,6 +106,7 @@ func ParseTQL(input string) (*Table, error) {
 		if col.Name == "Id" && !col.IsPK {
 			col.Type = "INTEGER"
 			col.IsPK = true
+			userDefinedPK = true
 		}
 
 		if strings.HasSuffix(col.Name, "Id") && col.Name != "Id" {
@@ -112,6 +115,10 @@ func ParseTQL(input string) (*Table, error) {
 		}
 
 		fields = append(fields, col)
+	}
+
+	if !isJoin && !userDefinedPK {
+		fields = append([]Column{{Name: "Id", Type: "INTEGER", Nullable: false, IsPK: true}}, fields...)
 	}
 
 	return &Table{Name: tableName, Fields: fields, CompositePK: compositePK}, nil
