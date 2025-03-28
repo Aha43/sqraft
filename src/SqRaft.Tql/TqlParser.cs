@@ -2,9 +2,6 @@ using SqRaft.Tql.Domain;
 
 namespace SqRaft.Tql;
 
-
-
-
 public static class TqlParser
 {
     public static TqlTable ParseTqlLine(string input)
@@ -25,25 +22,7 @@ public static class TqlParser
         var table = new TqlTable();
         var userDefinedPK = false;
 
-        if (rawName.Contains('+') || rawName.Contains('-'))
-        {
-            var isComposite = rawName.Contains('+');
-            var parts = rawName.Split(isComposite ? '+' : '-');
-            table.Name = $"{parts[0]}_{parts[1]}";
-
-            // Default FK columns (no type resolution here yet)
-            table.Columns.Add(new TqlColumn { Name = parts[0] + "Id", Type = "INTEGER" });
-            table.Columns.Add(new TqlColumn { Name = parts[1] + "Id", Type = "INTEGER" });
-
-            if (isComposite)
-                table.CompositeKey.AddRange([parts[0] + "Id", parts[1] + "Id"]);
-            else
-                table.Columns.Insert(0, new TqlColumn { Name = "Id", Type = "INTEGER", IsPrimaryKey = true });
-        }
-        else
-        {
-            table.Name = rawName;
-        }
+        AddManyToManyFkColumns(rawName, table);
 
         foreach (var colDef in columns)
         {
@@ -82,5 +61,28 @@ public static class TqlParser
         }
 
         return table;
+    }
+
+    private static void AddManyToManyFkColumns(string rawName, TqlTable table)
+    {
+        if (rawName.Contains('+') || rawName.Contains('-'))
+        {
+            var isComposite = rawName.Contains('+');
+            var parts = rawName.Split(isComposite ? '+' : '-');
+            table.Name = $"{parts[0]}_{parts[1]}";
+
+            // Default FK columns (no type resolution here yet)
+            table.Columns.Add(new TqlColumn { Name = parts[0] + "Id", Type = "INTEGER" });
+            table.Columns.Add(new TqlColumn { Name = parts[1] + "Id", Type = "INTEGER" });
+
+            if (isComposite)
+                table.CompositeKey.AddRange([parts[0] + "Id", parts[1] + "Id"]);
+            else
+                table.Columns.Insert(0, new TqlColumn { Name = "Id", Type = "INTEGER", IsPrimaryKey = true });
+        }
+        else
+        {
+            table.Name = rawName;
+        }
     }
 }
