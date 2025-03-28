@@ -1,10 +1,11 @@
+using SqRaft.Tql.Abstractions;
 using SqRaft.Tql.Domain;
 
 namespace SqRaft.Tql;
 
-public static class TqlParser
+public class TqlParser : ITqlParser
 {
-    public static TqlTable ParseTqlLine(string input)
+    public TqlTable ParseTqlLine(string input)
     {
         var open = input.IndexOf('(');
         var close = input.LastIndexOf(')');

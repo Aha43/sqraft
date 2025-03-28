@@ -1,15 +1,17 @@
 ﻿using SqRaft.Tql;
+using SqRaft.Tql.Abstractions;
 
 namespace SqRaft.UnitTest;
 
 public class UnitTest1
 {
+    private readonly ITqlParser _tqlParser = new TqlParser();
     [Theory]
     [InlineData("Person")]
     [InlineData("Person()")]
     public void ShouldGenerateSimpleAsExpected(string tql)
     {
-        var table = TqlParser.ParseTqlLine(tql);
+        var table = _tqlParser.ParseTqlLine(tql);
 
         Assert.Equal("Person", table.Name);
         Assert.Single(table.Columns);
@@ -25,7 +27,7 @@ public class UnitTest1
     [InlineData("Person(Id, Name)")]
     public void ShouldGenerateWithDefaultPkAndTextColumn(string tql)
     {
-        var table = TqlParser.ParseTqlLine(tql);
+        var table = _tqlParser.ParseTqlLine(tql);
 
         Assert.Equal("Person", table.Name);
         Assert.Equal(2, table.Columns.Count);
@@ -46,7 +48,7 @@ public class UnitTest1
     [InlineData("Person(IdNr+*,Name)")]
     public void ShouldGenerateWithNonDefaultIntPkAndTextColumn(string tql)
     {
-        var table = TqlParser.ParseTqlLine(tql);
+        var table = _tqlParser.ParseTqlLine(tql);
 
         Assert.Equal("Person", table.Name);
         Assert.Equal(2, table.Columns.Count);
@@ -68,7 +70,7 @@ public class UnitTest1
     [InlineData("Person(IdNr-*,Name)")]
     public void ShouldGenerateWithNonDefaultTextPkAndTextColumn(string tql)
     {
-        var table = TqlParser.ParseTqlLine(tql);
+        var table = _tqlParser.ParseTqlLine(tql);
 
         Assert.Equal("Person", table.Name);
         Assert.Equal(2, table.Columns.Count);
@@ -89,7 +91,7 @@ public class UnitTest1
     [InlineData("Person(Name!,Age?+)")]
     public void ShouldGenerateUniqueColumnAndNullableColumn(string tql)
     {
-        var table = TqlParser.ParseTqlLine(tql);
+        var table = _tqlParser.ParseTqlLine(tql);
 
         Assert.Equal("Person", table.Name);
         Assert.Equal(3, table.Columns.Count);
@@ -113,7 +115,7 @@ public class UnitTest1
     [Fact]
     public void ShouldParseManyToManyFkColumns()
     {
-        var table = TqlParser.ParseTqlLine("Person-Address");
+        var table = _tqlParser.ParseTqlLine("Person-Address");
 
         Assert.Equal("Person_Address", table.Name);
         Assert.Equal(3, table.Columns.Count);
