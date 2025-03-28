@@ -23,6 +23,8 @@ public class TqlParser : ITqlParser
         var table = new TqlTable();
         var userDefinedPK = false;
 
+        table.Name = ExtractTableNameFromPrefix(rawName);
+
         AddManyToManyFkColumns(rawName, table);
 
         foreach (var colDef in columns)
@@ -60,6 +62,11 @@ public class TqlParser : ITqlParser
         {
             table.Columns.Insert(0, new TqlColumn { Name = "Id", Type = "INTEGER", IsPrimaryKey = true });
         }
+        
+        if (rawName.Contains('>'))
+        {
+            AddForeignKeyColumns(rawName, table);
+        }
 
         return table;
     }
@@ -81,9 +88,49 @@ public class TqlParser : ITqlParser
             else
                 table.Columns.Insert(0, new TqlColumn { Name = "Id", Type = "INTEGER", IsPrimaryKey = true });
         }
-        else
+    }
+
+    private static void AddForeignKeyColumns(string rawName, TqlTable table)
+    {
+        var foreignKeys = ParseForeignKeys(rawName);
+        foreach (var (tableName, nullable) in foreignKeys)
         {
-            table.Name = rawName;
+            var col = new TqlColumn
+            {
+                Name = tableName + "Id",
+                Type = "INTEGER",
+                IsForeignKey = true,
+                Nullable = nullable
+            };
+            table.Columns.Add(col);
         }
     }
+
+    private static List<(string tableName, bool nullable)> ParseForeignKeys(string rawPrefix)
+    {
+        var retVal = new List<(string tableName, bool nullable)>();
+        var segments = rawPrefix.Split('>').Skip(1);
+        foreach (var segment in segments)
+        {
+            var trimmed = segment.Trim();
+            if (string.IsNullOrEmpty(trimmed))
+                continue;
+
+            var tableName = trimmed.TrimEnd('?');
+            var nullable = trimmed.EndsWith('?');
+            retVal.Add((tableName, nullable));
+        }
+        return retVal;
+        // var segments = rawPrefix.Split('>');
+        // return [.. segments
+        //     .Skip(1) // the first is the table name
+        //     .Select(s => (tableName: s.TrimEnd('?'), nullable: s.EndsWith('?')))];
+    }
+
+    private static string ExtractTableNameFromPrefix(string rawName)
+    {
+        var split = rawName.Split(['>', '-', '+'], StringSplitOptions.RemoveEmptyEntries);
+        return split[0].Trim();
+    }
+
 }
