@@ -1,4 +1,4 @@
-namespace SqRaft.Tql.Domain;
+namespace SqRaftEngine.Tql.Domain;
 
 public class TqlTable
 {

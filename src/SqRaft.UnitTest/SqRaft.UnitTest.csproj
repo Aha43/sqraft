@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../SqRaft.Tql/SqRaft.Tql.csproj" />
+    <ProjectReference Include="../SqRaft.TqlEngine/SqRaftEngine.Tql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
-using SqRaft.Tql.Domain;
+using SqRaftEngine.Tql.Domain;
 
-namespace SqRaft.Tql.Abstractions;
+namespace SqRaftEngine.Tql.Abstractions;
 
 public interface ITqlParser
 {
