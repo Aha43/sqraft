@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{78211539-D847-4814-9F5E-2E2F16295D6B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F90395D3-4702-4FB6-B656-39BABA8EE074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqRaft.Domain", "src\SqRaft.Domain\SqRaft.Domain.csproj", "{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqRaft.Tql", "src\SqRaft.Tql\SqRaft.Tql.csproj", "{5B517C1C-A194-4910-BCC3-AF8F69C3565E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,12 +16,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B517C1C-A194-4910-BCC3-AF8F69C3565E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B517C1C-A194-4910-BCC3-AF8F69C3565E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B517C1C-A194-4910-BCC3-AF8F69C3565E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B517C1C-A194-4910-BCC3-AF8F69C3565E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B5C4CE64-E6B3-422B-BBE4-41EDE35C9945} = {78211539-D847-4814-9F5E-2E2F16295D6B}
+		{5B517C1C-A194-4910-BCC3-AF8F69C3565E} = {F90395D3-4702-4FB6-B656-39BABA8EE074}
 	EndGlobalSection
 EndGlobal
