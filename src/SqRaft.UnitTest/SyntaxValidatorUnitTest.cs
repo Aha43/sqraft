@@ -34,6 +34,7 @@ public class SyntaxValidatorUnitTest
     [InlineData("123User(Name)")] // invalid table name
     [InlineData("User(Name#)")] // invalid character in suffix
     [InlineData("User>Name>)")] // malformed foreign chain
+    [InlineData("Post>Author>(Slug*, Title)")] // malformed foreign chain
     public void InvalidInputs_ReturnFalseWithError(string input)
     {
         var (isValid, error) = _validator.Validate(input);
