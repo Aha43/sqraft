@@ -9,7 +9,9 @@ public static class Services
     {
         services.AddSingleton<ITqlParser, TqlParser>()
             .AddSingleton<ITqlSyntaxValidator, RegexTqlSyntaxValidator>()
-            .AddSingleton<ITqlSemanticValidator, TqlSemanticValidator>();
+            .AddSingleton<ITqlSemanticValidator, TqlSemanticValidator>()
+            .AddSingleton<ITqlCondeGenerator, TqlSqlCodeGenerator>()
+            .AddSingleton<ITqlPipeline, TqlPipeline>();
         
         return services;
     }
