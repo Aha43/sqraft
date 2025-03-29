@@ -8,4 +8,6 @@ public class TqlColumn
     public bool Unique { get; set; }
     public bool IsPrimaryKey { get; set; }
     public bool IsForeignKey { get; set; }
+    public string? ForeignKeyTable { get; set; }
+    public string? ForeignKeyColumn { get; set; }
 }

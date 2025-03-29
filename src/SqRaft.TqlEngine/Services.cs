@@ -7,7 +7,9 @@ public static class Services
 {
     public static IServiceCollection AddTqlEngine(this IServiceCollection services)
     {
-        services.AddSingleton<ITqlParser, TqlParser>();
+        services.AddSingleton<ITqlParser, TqlParser>()
+            .AddSingleton<ITqlSyntaxValidator, RegexTqlSyntaxValidator>()
+            .AddSingleton<ITqlSemanticValidator, TqlSemanticValidator>();
         
         return services;
     }

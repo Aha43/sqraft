@@ -100,6 +100,8 @@ public class TqlParser : ITqlParser
                 Name = tableName + "Id",
                 Type = "INTEGER",
                 IsForeignKey = true,
+                ForeignKeyTable = tableName,
+                ForeignKeyColumn = "Id",
                 Nullable = nullable
             };
             table.Columns.Add(col);
@@ -121,10 +123,6 @@ public class TqlParser : ITqlParser
             retVal.Add((tableName, nullable));
         }
         return retVal;
-        // var segments = rawPrefix.Split('>');
-        // return [.. segments
-        //     .Skip(1) // the first is the table name
-        //     .Select(s => (tableName: s.TrimEnd('?'), nullable: s.EndsWith('?')))];
     }
 
     private static string ExtractTableNameFromPrefix(string rawName)

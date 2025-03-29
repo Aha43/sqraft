@@ -3,7 +3,7 @@ using SqRaftEngine.Tql.Abstractions;
 
 namespace SqRaft.UnitTest;
 
-public class SyntaxValidatorUnitTest
+public class TqlSyntaxValidatorUnitTest
 {
     private readonly ITqlSyntaxValidator _validator = new RegexTqlSyntaxValidator();
 
