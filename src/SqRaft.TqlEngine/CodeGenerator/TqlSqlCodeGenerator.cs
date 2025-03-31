@@ -2,7 +2,7 @@ using System.Text;
 using SqRaftEngine.Tql.Abstractions;
 using SqRaftEngine.Tql.Domain;
 
-namespace SqRaftEngine.Tql;
+namespace SqRaftEngine.Tql.CodeGenerator;
 
 public class TqlSqlCodeGenerator : ITqlCondeGenerator
 {

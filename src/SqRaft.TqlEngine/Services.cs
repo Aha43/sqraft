@@ -1,5 +1,6 @@
 using SqRaftEngine.Tql.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using SqRaftEngine.Tql.CodeGenerator;
 
 namespace SqRaftEngine.Tql;
 
@@ -11,6 +12,7 @@ public static class Services
             .AddSingleton<ITqlSyntaxValidator, RegexTqlSyntaxValidator>()
             .AddSingleton<ITqlSemanticValidator, TqlSemanticValidator>()
             .AddSingleton<ITqlCondeGenerator, TqlSqlCodeGenerator>()
+            .AddSingleton<ITqlCondeGenerator, TqlTqlCodeGenerator>()
             .AddSingleton<ITqlPipeline, TqlPipeline>();
         
         return services;
