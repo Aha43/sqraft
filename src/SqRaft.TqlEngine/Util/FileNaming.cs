@@ -1,23 +1,24 @@
-using System;
+using System.Text.RegularExpressions;
 
 namespace SqRaftEngine.Tql.Util;
 
-public class FileNameOrdering
+public static class FileNaming
 {
-
-}
-
-using System.Text.RegularExpressions;
-
-public static class SqlFileNaming
-{
-    private static readonly Regex OrderedFileRegex = new(@"^(\d+)_([A-Za-z0-9_]+)\.sql$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-    public static string GetOrderedSqlFilename(string sqlDir, string tableName)
+    private static readonly Dictionary<string, Regex> languages = new()
     {
-        Directory.CreateDirectory(sqlDir);
+        { "sql", new Regex(@"^(\d+)_([A-Za-z0-9_]+)\.sql$", RegexOptions.IgnoreCase | RegexOptions.Compiled) }
+    };
 
-        var existingFiles = Directory.GetFiles(sqlDir, "*.sql");
+    public static string GetFilename(string lan, string tableName)
+    {
+        if (!languages.TryGetValue(lan, out Regex? OrderedFileRegex))
+        {
+            return $"{tableName}.{lan}"; // Fallback to default naming if no regex is found to match ordered files
+        }
+            
+        Directory.CreateDirectory(lan);
+
+        var existingFiles = Directory.GetFiles(lan, $"*.{lan}");
         int maxIndex = 0;
         string? existingFile = null;
 
@@ -40,7 +41,6 @@ public static class SqlFileNaming
             }
         }
 
-        return existingFile ?? $"{(maxIndex + 1):D4}_{tableName}.sql";
+        return existingFile ?? $"{(maxIndex + 1):D4}_{tableName}.{lan}";
     }
 }
-
